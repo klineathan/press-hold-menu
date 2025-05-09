@@ -21,6 +21,30 @@
   width: 100%;
 }
 
+/* Page container */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+/* Page content */
+.page-content {
+  width: 100%;
+  max-width: 800px;
+  margin: 2rem auto;
+  text-align: left;
+}
+
+.page-content p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
 /* Main content area */
 .main-content {
   width: 100%;
@@ -211,7 +235,7 @@
   background-color: #1a1a1a;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .content-block:hover {
@@ -228,6 +252,78 @@
   margin: 0;
   color: #ccc;
   line-height: 1.6;
+}
+
+/* Contact form styles */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: #ccc;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.8rem;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background-color: #222;
+  color: white;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #646cff;
+  box-shadow: 0 0 0 2px rgba(100, 108, 255, 0.2);
+}
+
+.submit-button {
+  padding: 0.8rem 1.5rem;
+  background-color: #646cff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-top: 1rem;
+  align-self: flex-start;
+}
+
+.submit-button:hover {
+  background-color: #5258cc;
+  transform: translateY(-2px);
+}
+
+/* Page transition animations */
+.page-container {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Make sure buttons appear on Safari */
@@ -281,7 +377,6 @@
     transform: translate(10px, -65px);
   }
   
-  /* Adjust mobile positions */
   .nav-button:nth-child(1).hovered {
     transform: scale(1.2) translate(-10px, -65px) !important;
   }
@@ -294,9 +389,18 @@
     transform: scale(1.2) translate(10px, -65px) !important;
   }
   
+  .page-content {
+    padding: 0 1rem;
+  }
+  
   .content-block {
     padding: 1rem;
     margin: 1.5rem 0;
+  }
+  
+  .submit-button {
+    align-self: center;
+    width: 100%;
   }
 }
 
