@@ -3,6 +3,7 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  width: 100%;
 }
 
 /* App container */
@@ -10,41 +11,104 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 80vh;
+  /* Make the container take full height but allow overflow for scrolling */
+  min-height: 100vh;
+  /* Prevent pull-to-refresh in Safari */
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  position: relative; /* Allow absolute positioning inside */
+  padding-bottom: 5rem; /* Add space at the bottom for the menu */
+  width: 100%;
+}
+
+/* Main content area */
+.main-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1; /* Keep below the menu */
 }
 
 /* Menu container */
 .menu-container {
-  position: relative;
-  width: 300px;
-  height: 300px;
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 2rem;
+  z-index: 100; /* Ensure it stays above content */
+  /* Disable text selection */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Disable touch callout */
+  -webkit-touch-callout: none;
+  /* Better touch behavior */
+  touch-action: manipulation;
+  pointer-events: none; /* Allow clicks to pass through to content by default */
+}
+
+/* Make button and its children accept pointer events */
+.menu-container button,
+.menu-container .nav-items {
+  pointer-events: auto;
+}
+
+/* Custom touch pointer indicator */
+.touch-pointer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+  opacity: 0.8;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+  100% { transform: translate(-50%, -50%) scale(1); }
 }
 
 /* Main button */
 .main-button {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background-color: #646cff;
   border: none;
   cursor: pointer;
   z-index: 10;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+  /* Improve touch handling */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  /* Add subtle reflection effect */
+  background: linear-gradient(145deg, #646cff 0%, #4f56cc 100%);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0.85; /* Make it a bit transparent when inactive */
 }
+
+/* Remove plus sign from main button */
 
 .main-button:hover {
   box-shadow: 0 0 15px rgba(100, 108, 255, 0.7);
+  opacity: 1;
 }
 
 .main-button.active {
-  transform: scale(1.2);
+  transform: scale(1.1);
   box-shadow: 0 0 20px rgba(100, 108, 255, 0.9);
+  opacity: 1;
 }
 
 /* Nav buttons container */
@@ -65,8 +129,8 @@
 /* Nav buttons */
 .nav-button {
   position: absolute;
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background-color: #ff6464;
   border: none;
@@ -79,7 +143,16 @@
   transform-origin: center center;
   transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  /* Improve touch handling */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  /* Add subtle reflection effect */
+  background: linear-gradient(145deg, #ff6464 0%, #e05050 100%);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  /* Prevent Safari text selection */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .nav-items.active .nav-button {
@@ -90,6 +163,83 @@
   transform: scale(1.2) !important;
   box-shadow: 0 0 15px rgba(255, 100, 100, 0.8);
   z-index: 5;
+}
+
+/* Dummy content styles */
+.dummy-content {
+  margin-top: 2rem;
+  padding: 1rem;
+  width: 100%;
+  max-width: 800px;
+}
+
+.content-block {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.content-block:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.content-block h3 {
+  color: #646cff;
+  margin-bottom: 0.5rem;
+}
+
+.content-block p {
+  margin: 0;
+  color: #ccc;
+  line-height: 1.6;
+}
+
+/* Make sure buttons appear on Safari */
+@supports (-webkit-touch-callout: none) {
+  .nav-items.active .nav-button {
+    opacity: 1 !important;
+    visibility: visible !important; 
+  }
+  
+  .nav-button, .main-button {
+    /* Ensure iOS renders buttons correctly */
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  /* Prevent iOS blue flash */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Better mobile handling */
+@media (max-width: 768px) {
+  .menu-container {
+    width: 180px;
+    height: 180px;
+    bottom: 20px;
+  }
+  
+  .main-button {
+    width: 55px;
+    height: 55px;
+  }
+  
+  .nav-button {
+    width: 45px;
+    height: 45px;
+    font-size: 0.7rem;
+  }
+  
+  .content-block {
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
 }
 
 /* Existing animations and styles */

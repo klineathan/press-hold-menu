@@ -10,6 +10,8 @@ function App() {
   // State to track menu activation
   const [isActive, setIsActive] = useState(false);
   const [hoveredNavItem, setHoveredNavItem] = useState(null);
+  const [pointerPosition, setPointerPosition] = useState({ x: 0, y: 0 });
+  const [showPointer, setShowPointer] = useState(false);
   const menuRef = useRef(null);
   
   // Navigation menu items
@@ -19,13 +21,25 @@ function App() {
     { id: 3, label: "Contact", path: "/contact" }
   ];
   
-  // Handle mouse down on main button
-  const handleMouseDown = () => {
+  // Handle press start (both mouse and touch)
+  const handlePressStart = (e) => {
+    // Prevent default behavior that causes selection/highlighting
+    e.preventDefault();
     setIsActive(true);
+    
+    // Show pointer for touch devices
+    const isTouchEvent = e.type.startsWith('touch');
+    if (isTouchEvent) {
+      setShowPointer(true);
+      updatePointerPosition(e);
+    }
   };
   
-  // Handle mouse up anywhere
-  const handleMouseUp = () => {
+  // Handle press end (both mouse and touch)
+  const handlePressEnd = (e) => {
+    // Prevent default behavior
+    e.preventDefault();
+    
     if (hoveredNavItem) {
       // Navigate to the selected item's path
       console.log(`Navigating to: ${hoveredNavItem.path}`);
@@ -35,72 +49,237 @@ function App() {
     
     setIsActive(false);
     setHoveredNavItem(null);
+    setShowPointer(false);
   };
   
-  // Handle mouse leaving the menu area
-  const handleMouseLeave = () => {
+  // Handle mouse/touch leaving the menu area
+  const handleLeave = () => {
     setIsActive(false);
     setHoveredNavItem(null);
+    setShowPointer(false);
   };
   
-  // Handle mouse entering a nav item
-  const handleNavItemMouseEnter = (item) => {
+  // Handle pointer entering a nav item (works for both mouse and touch)
+  const handleNavItemEnter = (item) => {
     if (isActive) {
       setHoveredNavItem(item);
     }
   };
   
-  // Handle mouse leaving a nav item
-  const handleNavItemMouseLeave = () => {
+  // Handle pointer leaving a nav item
+  const handleNavItemLeave = () => {
     setHoveredNavItem(null);
   };
   
-  // Add global mouse up event listener
+  // Update pointer position based on event coordinates
+  const updatePointerPosition = (e) => {
+    if (!isActive) return;
+    
+    const isTouchEvent = e.type.startsWith('touch');
+    const clientX = isTouchEvent ? e.touches[0].clientX : e.clientX;
+    const clientY = isTouchEvent ? e.touches[0].clientY : e.clientY;
+    
+    setPointerPosition({
+      x: clientX,
+      y: clientY
+    });
+  };
+  
+  // Handle touch move to detect when user slides to nav items
+  const handleTouchMove = (e) => {
+    if (!isActive) return;
+    
+    // Prevent scrolling while menu is active
+    e.preventDefault();
+    
+    // Update the pointer position
+    updatePointerPosition(e);
+    
+    // Get touch position
+    const touch = e.touches[0];
+    const touchX = touch.clientX;
+    const touchY = touch.clientY;
+    
+    // Check if touch is over any nav buttons
+    const navButtons = document.querySelectorAll('.nav-button');
+    let foundHovered = null;
+    
+    navButtons.forEach((button, index) => {
+      const rect = button.getBoundingClientRect();
+      if (
+        touchX >= rect.left && 
+        touchX <= rect.right && 
+        touchY >= rect.top && 
+        touchY <= rect.bottom
+      ) {
+        foundHovered = navItems[index];
+      }
+    });
+    
+    setHoveredNavItem(foundHovered);
+  };
+  
+  // Add global event listeners
   useEffect(() => {
-    const handleGlobalMouseUp = () => {
+    const handleGlobalEnd = () => {
       setIsActive(false);
       setHoveredNavItem(null);
+      setShowPointer(false);
     };
     
-    document.addEventListener('mouseup', handleGlobalMouseUp);
+    // Handle both mouse and touch events
+    document.addEventListener('mouseup', handleGlobalEnd);
+    document.addEventListener('touchend', handleGlobalEnd);
     
+    // Prevent long-press context menu on iOS
+    const preventContextMenu = (e) => e.preventDefault();
+    document.addEventListener('contextmenu', preventContextMenu);
+    
+    // Cleanup
     return () => {
-      document.removeEventListener('mouseup', handleGlobalMouseUp);
+      document.removeEventListener('mouseup', handleGlobalEnd);
+      document.removeEventListener('touchend', handleGlobalEnd);
+      document.removeEventListener('contextmenu', preventContextMenu);
     };
   }, []);
+  
+  // Prevent scrolling when menu is active
+  useEffect(() => {
+    const preventScroll = (e) => {
+      if (isActive) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    
+    // Add event listeners to prevent scrolling when menu is active
+    if (isActive) {
+      document.addEventListener('touchmove', preventScroll, { passive: false });
+      document.addEventListener('wheel', preventScroll, { passive: false });
+      
+      // Lock body scroll
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+    } else {
+      // Restore scroll position when menu is deactivated
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+    }
+    
+    return () => {
+      document.removeEventListener('touchmove', preventScroll);
+      document.removeEventListener('wheel', preventScroll);
+    };
+  }, [isActive]);
+  
+  // Prevent text selection when menu is active
+  useEffect(() => {
+    if (isActive) {
+      document.body.style.userSelect = 'none';
+      document.body.style.webkitUserSelect = 'none';
+      document.body.style.msUserSelect = 'none';
+      document.body.style.mozUserSelect = 'none';
+    } else {
+      document.body.style.userSelect = '';
+      document.body.style.webkitUserSelect = '';
+      document.body.style.msUserSelect = '';
+      document.body.style.mozUserSelect = '';
+    }
+  }, [isActive]);
+  
+  // Detect iOS Safari
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   
   return (
     <div className="app-container">
       <h1>Press and Hold Menu</h1>
       
+      {/* Main content area */}
+      <div className="main-content">
+        {/* Dummy content to demonstrate scrolling is prevented */}
+        <div className="dummy-content">
+          <h2>Scroll Test Content</h2>
+          <p>Try to scroll while the menu is active - it should be prevented.</p>
+          
+          {Array(10).fill().map((_, i) => (
+            <div key={i} className="content-block">
+              <h3>Section {i + 1}</h3>
+              <p>
+                This is test content to make the page scrollable. When you press and hold
+                the menu button, scrolling should be disabled so you can navigate to 
+                menu items without accidentally scrolling the page.
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Floating menu at the bottom center */}
       <div 
         className="menu-container" 
         ref={menuRef}
-        onMouseLeave={handleMouseLeave}
+        onMouseLeave={handleLeave}
+        onTouchMove={handleTouchMove}
+        onTouchCancel={handleLeave}
+        onMouseMove={updatePointerPosition}
       >
+        {/* Custom touch pointer indicator */}
+        {showPointer && isIOS && (
+          <div 
+            className="touch-pointer" 
+            style={{ 
+              left: pointerPosition.x + 'px', 
+              top: pointerPosition.y + 'px' 
+            }}
+          >
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="18" fill="rgba(255,255,255,0.3)" />
+              <circle cx="20" cy="20" r="8" fill="rgba(255,255,255,0.5)" />
+            </svg>
+          </div>
+        )}
+        
         {/* Nav buttons */}
         <div className={`nav-items ${isActive ? 'active' : ''}`}>
-          {navItems.map((item, index) => (
-            <button
-              key={item.id}
-              className={`nav-button ${hoveredNavItem?.id === item.id ? 'hovered' : ''}`}
-              style={{
-                // Position in an arc above the main button
-                transform: `rotate(${-90 + (index * 90 / (navItems.length - 1))}deg) translate(100px) rotate(${90 - (index * 90 / (navItems.length - 1))}deg)`
-              }}
-              onMouseEnter={() => handleNavItemMouseEnter(item)}
-              onMouseLeave={handleNavItemMouseLeave}
-            >
-              {item.label}
-            </button>
-          ))}
+          {navItems.map((item, index) => {
+            // Calculate angle based on item index
+            // For 3 items, we want to create a semi-circle above the main button
+            const angle = -180 + (index * 180 / (navItems.length - 1));
+            const distance = 70; // Distance from main button
+            
+            return (
+              <button
+                key={item.id}
+                className={`nav-button ${hoveredNavItem?.id === item.id ? 'hovered' : ''}`}
+                style={{
+                  // Position in a semi-circle above the main button
+                  transform: `rotate(${angle}deg) translate(${distance}px) rotate(${-angle}deg)`
+                }}
+                onMouseEnter={() => handleNavItemEnter(item)}
+                onMouseLeave={handleNavItemLeave}
+                onTouchStart={() => handleNavItemEnter(item)}
+              >
+                {item.label}
+              </button>
+            );
+          })}
         </div>
         
         {/* Main button */}
         <button
           className={`main-button ${isActive ? 'active' : ''}`}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
+          onMouseDown={handlePressStart}
+          onMouseUp={handlePressEnd}
+          onTouchStart={handlePressStart}
+          onTouchEnd={handlePressEnd}
         />
       </div>
     </div>
