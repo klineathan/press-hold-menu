@@ -249,28 +249,17 @@ function App() {
         
         {/* Nav buttons */}
         <div className={`nav-items ${isActive ? 'active' : ''}`}>
-          {navItems.map((item, index) => {
-            // Calculate angle based on item index
-            // For 3 items, we want to create a semi-circle above the main button
-            const angle = -180 + (index * 180 / (navItems.length - 1));
-            const distance = 70; // Distance from main button
-            
-            return (
-              <button
-                key={item.id}
-                className={`nav-button ${hoveredNavItem?.id === item.id ? 'hovered' : ''}`}
-                style={{
-                  // Position in a semi-circle above the main button
-                  transform: `rotate(${angle}deg) translate(${distance}px) rotate(${-angle}deg)`
-                }}
-                onMouseEnter={() => handleNavItemEnter(item)}
-                onMouseLeave={handleNavItemLeave}
-                onTouchStart={() => handleNavItemEnter(item)}
-              >
-                {item.label}
-              </button>
-            );
-          })}
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              className={`nav-button ${hoveredNavItem?.id === item.id ? 'hovered' : ''}`}
+              onMouseEnter={() => handleNavItemEnter(item)}
+              onMouseLeave={handleNavItemLeave}
+              onTouchStart={() => handleNavItemEnter(item)}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
         
         {/* Main button */}

@@ -98,8 +98,6 @@
   opacity: 0.85; /* Make it a bit transparent when inactive */
 }
 
-/* Remove plus sign from main button */
-
 .main-button:hover {
   box-shadow: 0 0 15px rgba(100, 108, 255, 0.7);
   opacity: 1;
@@ -126,7 +124,7 @@
   pointer-events: all;
 }
 
-/* Nav buttons */
+/* Nav buttons - completely revised positioning approach */
 .nav-button {
   position: absolute;
   width: 50px;
@@ -140,10 +138,11 @@
   color: white;
   font-weight: bold;
   opacity: 0;
-  transform-origin: center center;
-  transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
   font-size: 0.75rem;
+  /* Fixed scaling center */
+  transform-origin: center center;
+  transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
   /* Improve touch handling */
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -155,14 +154,47 @@
   user-select: none;
 }
 
+/* Left nav button */
+.nav-button:nth-child(1) {
+  left: 0;
+  top: 50%;
+  transform: translate(-15px, -70px);
+}
+
+/* Middle nav button */
+.nav-button:nth-child(2) {
+  left: 50%;
+  top: 0;
+  transform: translate(-25px, -35px);
+}
+
+/* Right nav button */
+.nav-button:nth-child(3) {
+  right: 0;
+  top: 50%;
+  transform: translate(15px, -70px);
+}
+
 .nav-items.active .nav-button {
   opacity: 1;
 }
 
+/* Absolute simplicity - only scale with no movement */
 .nav-button.hovered {
-  transform: scale(1.2) !important;
-  box-shadow: 0 0 15px rgba(255, 100, 100, 0.8);
-  z-index: 5;
+  transform: scale(1.2) translate(-15px, -70px) !important;
+}
+
+/* Override for each specific button to ensure they scale in place */
+.nav-button:nth-child(1).hovered {
+  transform: scale(1.2) translate(-15px, -70px) !important;
+}
+
+.nav-button:nth-child(2).hovered {
+  transform: scale(1.2) translate(-25px, -35px) !important;
+}
+
+.nav-button:nth-child(3).hovered {
+  transform: scale(1.2) translate(15px, -70px) !important;
 }
 
 /* Dummy content styles */
@@ -234,6 +266,32 @@
     width: 45px;
     height: 45px;
     font-size: 0.7rem;
+  }
+  
+  /* Adjust mobile positions */
+  .nav-button:nth-child(1) {
+    transform: translate(-10px, -65px);
+  }
+  
+  .nav-button:nth-child(2) {
+    transform: translate(-22px, -30px);
+  }
+  
+  .nav-button:nth-child(3) {
+    transform: translate(10px, -65px);
+  }
+  
+  /* Adjust mobile positions */
+  .nav-button:nth-child(1).hovered {
+    transform: scale(1.2) translate(-10px, -65px) !important;
+  }
+  
+  .nav-button:nth-child(2).hovered {
+    transform: scale(1.2) translate(-22px, -30px) !important;
+  }
+  
+  .nav-button:nth-child(3).hovered {
+    transform: scale(1.2) translate(10px, -65px) !important;
   }
   
   .content-block {
