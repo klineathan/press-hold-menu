@@ -28,6 +28,7 @@ function Menu() {
     const isTouchEvent = e.type.startsWith('touch');
     if (isTouchEvent) {
       setShowPointer(true);
+      // BUG - the touch pointer initial position is wrong, and it is not being updated correctly
       updatePointerPosition(e);
     }
   };

@@ -57,7 +57,6 @@
 /* Menu container */
 .menu-container {
   position: fixed;
-  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   width: 200px;
@@ -105,8 +104,6 @@
 /* Main button */
 .main-button {
   position: relative;
-  width: 60px;
-  height: 60px;
   border-radius: 50%;
   background-color: #646cff;
   border: none;
@@ -128,9 +125,17 @@
 }
 
 .main-button.active {
-  transform: scale(1.1);
   box-shadow: 0 0 20px rgba(100, 108, 255, 0.9);
   opacity: 1;
+  animation: bounce-in .5s ease-out 1 forwards;
+}
+
+@keyframes bounce-in {
+  50% {
+    transform: scale(3.2);
+  }
+  70% { transform: scale(2.9); }
+  100% { transform: scale(3.0); }
 }
 
 /* Nav buttons container */
@@ -350,12 +355,11 @@
   .menu-container {
     width: 180px;
     height: 180px;
-    bottom: 20px;
+    bottom: 0px;
   }
   
   .main-button {
-    width: 55px;
-    height: 55px;
+    padding: 12px;
   }
   
   .nav-button {
