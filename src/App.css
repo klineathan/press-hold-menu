@@ -1,7 +1,6 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
   width: 100%;
 }
@@ -17,7 +16,6 @@
   overscroll-behavior: none;
   touch-action: manipulation;
   position: relative; /* Allow absolute positioning inside */
-  padding-bottom: 5rem; /* Add space at the bottom for the menu */
   width: 100%;
 }
 
@@ -28,21 +26,18 @@
   align-items: center;
   width: 100%;
   min-height: 100vh;
-  padding: 2rem 1rem;
 }
 
 /* Page content */
 .page-content {
   width: 100%;
   max-width: 800px;
-  margin: 2rem auto;
   text-align: left;
 }
 
 .page-content p {
   font-size: 1.1rem;
   line-height: 1.6;
-  margin-bottom: 1.5rem;
 }
 
 /* Main content area */
@@ -57,10 +52,6 @@
 /* Menu container */
 .menu-container {
   position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200px;
-  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -79,7 +70,7 @@
 
 /* Make button and its children accept pointer events */
 .menu-container button,
-.menu-container .nav-items {
+.menu-container .nav-button {
   pointer-events: auto;
 }
 
@@ -99,6 +90,15 @@
   0% { transform: translate(-50%, -50%) scale(1); }
   50% { transform: translate(-50%, -50%) scale(1.1); }
   100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.center {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background-color: red;
+  border-radius: 50%;
+  z-index: 1000;
 }
 
 /* Main button */
@@ -138,21 +138,6 @@
   100% { transform: scale(3.0); }
 }
 
-/* Nav buttons container */
-.nav-items {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.nav-items.active {
-  pointer-events: all;
-}
-
 /* Nav buttons - completely revised positioning approach */
 .nav-button {
   position: absolute;
@@ -170,7 +155,6 @@
   cursor: pointer;
   font-size: 0.75rem;
   /* Fixed scaling center */
-  transform-origin: center center;
   transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
   /* Improve touch handling */
   -webkit-tap-highlight-color: transparent;
@@ -183,47 +167,26 @@
   user-select: none;
 }
 
-/* Left nav button */
-.nav-button:nth-child(1) {
-  left: 0;
-  top: 50%;
-  transform: translate(-15px, -70px);
-}
-
-/* Middle nav button */
-.nav-button:nth-child(2) {
-  left: 50%;
-  top: 0;
-  transform: translate(-25px, -35px);
-}
-
-/* Right nav button */
-.nav-button:nth-child(3) {
-  right: 0;
-  top: 50%;
-  transform: translate(15px, -70px);
-}
-
-.nav-items.active .nav-button {
+.nav-button.active {
   opacity: 1;
 }
 
 /* Absolute simplicity - only scale with no movement */
 .nav-button.hovered {
-  transform: scale(1.2) translate(-15px, -70px) !important;
+  transform: scale(1.2);
 }
 
 /* Override for each specific button to ensure they scale in place */
 .nav-button:nth-child(1).hovered {
-  transform: scale(1.2) translate(-15px, -70px) !important;
+  transform: scale(1.2);
 }
 
 .nav-button:nth-child(2).hovered {
-  transform: scale(1.2) translate(-25px, -35px) !important;
+  transform: scale(1.2);
 }
 
 .nav-button:nth-child(3).hovered {
-  transform: scale(1.2) translate(15px, -70px) !important;
+  transform: scale(1.2);
 }
 
 /* Dummy content styles */
@@ -333,7 +296,7 @@
 
 /* Make sure buttons appear on Safari */
 @supports (-webkit-touch-callout: none) {
-  .nav-items.active .nav-button {
+  .nav-button.active {
     opacity: 1 !important;
     visibility: visible !important; 
   }
@@ -368,29 +331,16 @@
     font-size: 0.7rem;
   }
   
-  /* Adjust mobile positions */
-  .nav-button:nth-child(1) {
-    transform: translate(-10px, -65px);
-  }
-  
-  .nav-button:nth-child(2) {
-    transform: translate(-22px, -30px);
-  }
-  
-  .nav-button:nth-child(3) {
-    transform: translate(10px, -65px);
-  }
-  
   .nav-button:nth-child(1).hovered {
-    transform: scale(1.2) translate(-10px, -65px) !important;
+    transform: scale(1.2);
   }
   
   .nav-button:nth-child(2).hovered {
-    transform: scale(1.2) translate(-22px, -30px) !important;
+    transform: scale(1.2);
   }
   
   .nav-button:nth-child(3).hovered {
-    transform: scale(1.2) translate(10px, -65px) !important;
+    transform: scale(1.2);
   }
   
   .page-content {

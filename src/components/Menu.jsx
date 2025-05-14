@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
 
@@ -9,13 +9,15 @@ function Menu() {
   const [pointerPosition, setPointerPosition] = useState({ x: 0, y: 0 });
   const [showPointer, setShowPointer] = useState(false);
   const menuRef = useRef(null);
+  const mainButtonRef = useRef(null);
   const navigate = useNavigate();
   
   // Navigation menu items
   const navItems = [
     { id: 1, label: "Home", path: "/" },
     { id: 2, label: "About", path: "/about" },
-    { id: 3, label: "Contact", path: "/contact" }
+    { id: 3, label: "Contact", path: "/contact" },
+    { id: 4, label: "Playground", path: "/playground" }
   ];
   
   // Handle press start (both mouse and touch)
@@ -194,6 +196,40 @@ function Menu() {
   
   // Detect iOS Safari
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+  // Place n nav items around a circle so that the arc length between consecutive points is a distance d starting at angle a
+  function calculateNavItemOriginPoints(cx, cy, r, n, arcLength, startAngle = null) {
+    // If startAngle is null, calculate the startAngle to center the items along the y-axis
+    if (startAngle === null) {
+      // For symmetrical placement around y-axis, calculate the total angle span
+      const totalAngleSpan = (n - 1) * (arcLength / r);
+      // Set startAngle to PI (bottom) minus half the total angle span
+      // Then add PI/2 (90 degrees) to rotate clockwise
+      startAngle = Math.PI - totalAngleSpan / 2 + Math.PI/2;
+    }
+    
+    const dTheta = arcLength / r;
+    const points = [];
+    for (let i = 0; i < n; i++) {
+      const theta = startAngle + i * dTheta;
+      const x = r * Math.cos(theta);
+      const y = r * Math.sin(theta);
+      points.push({ x, y });
+    }
+    return points;
+  }
+
+  const pts = useMemo(() => {
+    if (mainButtonRef.current) {
+      // Since we're using relative positioning, we don't need the main button's position
+      // We'll just use a radius and position relative to the center
+      const pts = calculateNavItemOriginPoints(0, 0, 100, navItems.length, 85); 
+      console.log(pts);
+      return pts;
+    } else {
+      return null
+    }
+  }, [mainButtonRef, navItems.length])
   
   return (
     <div 
@@ -220,29 +256,34 @@ function Menu() {
         </div>
       )}
       
-      {/* Nav buttons */}
-      <div className={`nav-items ${isActive ? 'active' : ''}`}>
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            className={`nav-button ${hoveredNavItem?.id === item.id ? 'hovered' : ''}`}
-            onMouseEnter={() => handleNavItemEnter(item)}
-            onMouseLeave={handleNavItemLeave}
-            onTouchStart={() => handleNavItemEnter(item)}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-      
       {/* Main button */}
       <button
+        ref={mainButtonRef}
         className={`main-button ${isActive ? 'active' : ''}`}
         onMouseDown={handlePressStart}
         onMouseUp={handlePressEnd}
         onTouchStart={handlePressStart}
         onTouchEnd={handlePressEnd}
       />
+
+      {/* Nav buttons */}
+      {pts && navItems.map((item, i) => (
+        <button
+          key={item.id}
+          className={`nav-button${hoveredNavItem?.id === item.id ? ' hovered' : ''}${isActive ? ' active' : ''}`}
+          style={{ 
+            top: `calc(50% + ${pts[i].y}px)`, 
+            left: `calc(50% + ${pts[i].x}px)`,
+            transform: `translate(-50%, -50%) ${hoveredNavItem?.id === item.id ? 'scale(1.2)' : 'scale(1)'}`,
+            transition: 'transform 0.2s ease-out'
+          }}
+          onMouseEnter={() => handleNavItemEnter(item)}
+          onMouseLeave={handleNavItemLeave}
+          onTouchStart={() => handleNavItemEnter(item)}
+        >
+          {item.label}
+        </button>
+      ))}
     </div>
   );
 }
