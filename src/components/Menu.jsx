@@ -20,6 +20,9 @@ function Menu() {
     { id: 4, label: "Playground", path: "/playground" }
   ];
   
+  // Use state for points to ensure they update properly after navigation
+  const [menuPoints, setMenuPoints] = useState(null);
+  
   // Handle press start (both mouse and touch)
   const handlePressStart = (e) => {
     // Prevent default behavior that causes selection/highlighting
@@ -219,17 +222,13 @@ function Menu() {
     return points;
   }
 
-  const pts = useMemo(() => {
-    if (mainButtonRef.current) {
-      // Since we're using relative positioning, we don't need the main button's position
-      // We'll just use a radius and position relative to the center
-      const pts = calculateNavItemOriginPoints(0, 0, 100, navItems.length, 85); 
-      console.log(pts);
-      return pts;
-    } else {
-      return null
-    }
-  }, [mainButtonRef, navItems.length])
+  // Calculate points when component mounts and whenever needed
+  useEffect(() => {
+    // Since we're using relative positioning, we don't need the main button's position
+    // We'll just use a radius and position relative to the center
+    const pts = calculateNavItemOriginPoints(0, 0, 100, navItems.length, 85);
+    setMenuPoints(pts);
+  }, [navItems.length, isActive]);
   
   return (
     <div 
@@ -267,13 +266,13 @@ function Menu() {
       />
 
       {/* Nav buttons */}
-      {pts && navItems.map((item, i) => (
+      {menuPoints && navItems.map((item, i) => (
         <button
           key={item.id}
           className={`nav-button${hoveredNavItem?.id === item.id ? ' hovered' : ''}${isActive ? ' active' : ''}`}
           style={{ 
-            top: `calc(50% + ${pts[i].y}px)`, 
-            left: `calc(50% + ${pts[i].x}px)`,
+            top: `calc(50% + ${menuPoints[i].y}px)`, 
+            left: `calc(50% + ${menuPoints[i].x}px)`,
             transform: `translate(-50%, -50%) ${hoveredNavItem?.id === item.id ? 'scale(1.2)' : 'scale(1)'}`,
             transition: 'transform 0.2s ease-out'
           }}
