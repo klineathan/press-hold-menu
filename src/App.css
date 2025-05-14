@@ -56,6 +56,12 @@
   align-items: center;
   justify-content: center;
   z-index: 100; /* Ensure it stays above content */
+  /* Center the menu at the bottom of the screen */
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 180px;
   /* Disable text selection */
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -80,10 +86,13 @@
   top: 0;
   left: 0;
   pointer-events: none;
-  z-index: 1000;
+  z-index: 2000;
   transform: translate(-50%, -50%);
   opacity: 0.8;
   animation: pulse 2s infinite;
+  /* Ensure iOS Safari renders correctly */
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
 }
 
 @keyframes pulse {
@@ -307,6 +316,15 @@
     appearance: none;
   }
   
+  /* Safari-specific positioning fix */
+  .menu-container {
+    position: fixed !important;
+    bottom: 10px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 1000 !important;
+  }
+  
   /* Prevent iOS blue flash */
   * {
     -webkit-tap-highlight-color: transparent;
@@ -318,7 +336,10 @@
   .menu-container {
     width: 180px;
     height: 180px;
-    bottom: 0px;
+    /* Keep centered at bottom */
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
   }
   
   .main-button {

@@ -32,9 +32,15 @@ function Menu() {
     // Show pointer for touch devices
     const isTouchEvent = e.type.startsWith('touch');
     if (isTouchEvent) {
-      setShowPointer(true);
-      // BUG - the touch pointer initial position is wrong, and it is not being updated correctly
-      updatePointerPosition(e);
+      // Force update position and show pointer
+      if (e.touches && e.touches.length > 0) {
+        setPointerPosition({
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY
+        });
+        console.log("Touch start at:", e.touches[0].clientX, e.touches[0].clientY);
+        setShowPointer(true);
+      }
     }
   };
   
@@ -75,16 +81,25 @@ function Menu() {
   
   // Update pointer position based on event coordinates
   const updatePointerPosition = (e) => {
-    if (!isActive) return;
-    
+    // Always update position, not just when active
     const isTouchEvent = e.type.startsWith('touch');
-    const clientX = isTouchEvent ? e.touches[0].clientX : e.clientX;
-    const clientY = isTouchEvent ? e.touches[0].clientY : e.clientY;
     
-    setPointerPosition({
-      x: clientX,
-      y: clientY
-    });
+    // Only proceed if it's a touch event with touches
+    if (isTouchEvent && e.touches && e.touches.length > 0) {
+      const clientX = e.touches[0].clientX;
+      const clientY = e.touches[0].clientY;
+      
+      setPointerPosition({
+        x: clientX,
+        y: clientY
+      });
+    } else if (!isTouchEvent) {
+      // For mouse events
+      setPointerPosition({
+        x: e.clientX,
+        y: e.clientY
+      });
+    }
   };
   
   // Handle touch move to detect when user slides to nav items
@@ -94,8 +109,19 @@ function Menu() {
     // Prevent scrolling while menu is active
     e.preventDefault();
     
-    // Update the pointer position
-    updatePointerPosition(e);
+    // Ensure touch pointer is showing and update its position
+    if (e.touches && e.touches.length > 0) {
+      setPointerPosition({
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY
+      });
+      
+      // Force pointer visibility during touch move
+      if (isIOS && !showPointer) {
+        console.log("Force showing pointer during touch move");
+        setShowPointer(true);
+      }
+    }
     
     // Get touch position
     const touch = e.touches[0];
@@ -145,35 +171,18 @@ function Menu() {
     };
   }, []);
   
-  // Prevent scrolling when menu is active
+  // Prevent scrolling when menu is active - minimal approach
   useEffect(() => {
     const preventScroll = (e) => {
       if (isActive) {
         e.preventDefault();
-        e.stopPropagation();
       }
     };
     
-    // Add event listeners to prevent scrolling when menu is active
+    // Just add event listeners, no DOM manipulation
     if (isActive) {
       document.addEventListener('touchmove', preventScroll, { passive: false });
       document.addEventListener('wheel', preventScroll, { passive: false });
-      
-      // Lock body scroll
-      const scrollY = window.scrollY;
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
-    } else {
-      // Restore scroll position when menu is deactivated
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
-      }
     }
     
     return () => {
@@ -230,6 +239,12 @@ function Menu() {
     setMenuPoints(pts);
   }, [navItems.length, isActive]);
   
+  // Add an effect to log when pointer visibility changes
+  useEffect(() => {
+    console.log("Touch pointer visibility:", showPointer ? "visible" : "hidden");
+    console.log("Current position:", pointerPosition);
+  }, [showPointer, pointerPosition]);
+  
   return (
     <div 
       className="menu-container" 
@@ -239,20 +254,25 @@ function Menu() {
       onTouchCancel={handleLeave}
       onMouseMove={updatePointerPosition}
     >
-      {/* Custom touch pointer indicator */}
-      {showPointer && isIOS && (
+      {/* Touch pointer (always render for iOS, control visibility with opacity) */}
+      {isIOS && (
         <div 
-          className="touch-pointer" 
           style={{ 
-            left: pointerPosition.x + 'px', 
-            top: pointerPosition.y + 'px' 
+            position: 'fixed',
+            left: `${pointerPosition.x}px`, 
+            top: `${pointerPosition.y}px`,
+            width: '60px',  // Larger size
+            height: '60px',
+            margin: '-30px 0 0 -30px', // Center offset instead of transform
+            borderRadius: '50%',
+            border: '3px solid white',
+            backgroundColor: 'rgba(100, 108, 255, 0.5)',
+            pointerEvents: 'none',
+            zIndex: 9999,
+            display: showPointer ? 'block' : 'none',
+            boxShadow: '0 0 20px rgba(255, 255, 255, 0.8)'
           }}
-        >
-          <svg width="40" height="40" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="18" fill="rgba(255,255,255,0.3)" />
-            <circle cx="20" cy="20" r="8" fill="rgba(255,255,255,0.5)" />
-          </svg>
-        </div>
+        />
       )}
       
       {/* Main button */}
