@@ -246,64 +246,73 @@ function Menu() {
   }, [showPointer, pointerPosition]);
   
   return (
-    <div 
-      className="menu-container" 
-      ref={menuRef}
-      onMouseLeave={handleLeave}
-      onTouchMove={handleTouchMove}
-      onTouchCancel={handleLeave}
-      onMouseMove={updatePointerPosition}
-    >
-      {/* Touch pointer (always render for iOS, control visibility with opacity) */}
-      {isIOS && (
-        <div 
-          style={{ 
-            position: 'fixed',
-            left: `${pointerPosition.x}px`, 
-            top: `${pointerPosition.y}px`,
-            width: '60px',  // Larger size
-            height: '60px',
-            margin: '-30px 0 0 -30px', // Center offset instead of transform
-            borderRadius: '50%',
-            border: '3px solid white',
-            backgroundColor: 'rgba(100, 108, 255, 0.5)',
-            pointerEvents: 'none',
-            zIndex: 9999,
-            display: showPointer ? 'block' : 'none',
-            boxShadow: '0 0 20px rgba(255, 255, 255, 0.8)'
-          }}
-        />
-      )}
-      
-      {/* Main button */}
-      <button
-        ref={mainButtonRef}
-        className={`main-button ${isActive ? 'active' : ''}`}
-        onMouseDown={handlePressStart}
-        onMouseUp={handlePressEnd}
-        onTouchStart={handlePressStart}
-        onTouchEnd={handlePressEnd}
+    <>
+      {/* Backdrop overlay for blur/dim effect */}
+      <div 
+        className={`menu-backdrop ${isActive ? 'active' : ''}`} 
+        onMouseUp={handleLeave}
+        onTouchEnd={handleLeave}
       />
-
-      {/* Nav buttons */}
-      {menuPoints && navItems.map((item, i) => (
+      
+      <div 
+        className="menu-container" 
+        ref={menuRef}
+        onMouseLeave={handleLeave}
+        onTouchMove={handleTouchMove}
+        onTouchCancel={handleLeave}
+        onMouseMove={updatePointerPosition}
+      >
+        {/* Touch pointer (always render for iOS, control visibility with opacity) */}
+        {isIOS && (
+          <div 
+            style={{ 
+              position: 'fixed',
+              left: `${pointerPosition.x}px`, 
+              top: `${pointerPosition.y}px`,
+              width: '60px',  // Larger size
+              height: '60px',
+              margin: '-30px 0 0 -30px', // Center offset instead of transform
+              borderRadius: '50%',
+              border: '3px solid white',
+              backgroundColor: 'rgba(100, 108, 255, 0.5)',
+              pointerEvents: 'none',
+              zIndex: 9999,
+              display: showPointer ? 'block' : 'none',
+              boxShadow: '0 0 20px rgba(255, 255, 255, 0.8)'
+            }}
+          />
+        )}
+        
+        {/* Main button */}
         <button
-          key={item.id}
-          className={`nav-button${hoveredNavItem?.id === item.id ? ' hovered' : ''}${isActive ? ' active' : ''}`}
-          style={{ 
-            top: `calc(50% + ${menuPoints[i].y}px)`, 
-            left: `calc(50% + ${menuPoints[i].x}px)`,
-            transform: `translate(-50%, -50%) ${hoveredNavItem?.id === item.id ? 'scale(1.2)' : 'scale(1)'}`,
-            transition: 'transform 0.2s ease-out'
-          }}
-          onMouseEnter={() => handleNavItemEnter(item)}
-          onMouseLeave={handleNavItemLeave}
-          onTouchStart={() => handleNavItemEnter(item)}
-        >
-          {item.label}
-        </button>
-      ))}
-    </div>
+          ref={mainButtonRef}
+          className={`main-button ${isActive ? 'active' : ''}`}
+          onMouseDown={handlePressStart}
+          onMouseUp={handlePressEnd}
+          onTouchStart={handlePressStart}
+          onTouchEnd={handlePressEnd}
+        />
+
+        {/* Nav buttons */}
+        {menuPoints && navItems.map((item, i) => (
+          <button
+            key={item.id}
+            className={`nav-button${hoveredNavItem?.id === item.id ? ' hovered' : ''}${isActive ? ' active' : ''}`}
+            style={{ 
+              top: `calc(50% + ${menuPoints[i].y}px)`, 
+              left: `calc(50% + ${menuPoints[i].x}px)`,
+              transform: `translate(-50%, -50%) ${hoveredNavItem?.id === item.id ? 'scale(1.2)' : 'scale(1)'}`,
+              transition: 'transform 0.2s ease-out'
+            }}
+            onMouseEnter={() => handleNavItemEnter(item)}
+            onMouseLeave={handleNavItemLeave}
+            onTouchStart={() => handleNavItemEnter(item)}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+    </>
   );
 }
 
