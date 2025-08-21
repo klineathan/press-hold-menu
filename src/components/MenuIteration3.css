@@ -1,0 +1,337 @@
+/* Iteration 3: Minimalist Floating Design */
+
+/* Clean, subtle backdrop */
+.menu-backdrop-iteration3 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, 
+    rgba(248, 250, 252, 0.95) 0%,
+    rgba(241, 245, 249, 0.98) 100%
+  );
+  backdrop-filter: blur(40px) brightness(1.1);
+  -webkit-backdrop-filter: blur(40px) brightness(1.1);
+  z-index: 90;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.menu-backdrop-iteration3.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Minimalist menu container */
+.menu-container-iteration3 {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 190px;
+  height: 190px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+  pointer-events: none;
+}
+
+.menu-container-iteration3 button {
+  pointer-events: auto;
+}
+
+/* Clean touch pointer */
+.touch-pointer-iteration3 {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  margin: -30px 0 0 -30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, 
+    rgba(100, 116, 139, 0.15) 0%,
+    rgba(100, 116, 139, 0.08) 60%,
+    transparent 100%
+  );
+  border: 1.5px solid rgba(100, 116, 139, 0.3);
+  pointer-events: none;
+  z-index: 9999;
+  animation: minimalPulse 3s ease-in-out infinite;
+}
+
+.touch-pointer-iteration3::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: rgba(100, 116, 139, 0.6);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes minimalPulse {
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.15);
+    opacity: 1;
+  }
+}
+
+/* Main button with floating design */
+.main-button-iteration3 {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, 
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(248, 250, 252, 0.8) 100%
+  );
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  box-shadow: 
+    0 8px 25px rgba(100, 116, 139, 0.15),
+    0 3px 10px rgba(100, 116, 139, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.button-surface {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.center-dot {
+  width: 6px;
+  height: 6px;
+  background: linear-gradient(145deg, 
+    rgba(100, 116, 139, 0.8) 0%,
+    rgba(71, 85, 105, 0.9) 100%
+  );
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.main-button-iteration3:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 12px 35px rgba(100, 116, 139, 0.2),
+    0 5px 15px rgba(100, 116, 139, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.main-button-iteration3:hover .center-dot {
+  transform: scale(1.5);
+  background: linear-gradient(145deg, 
+    rgba(59, 130, 246, 0.8) 0%,
+    rgba(37, 99, 235, 0.9) 100%
+  );
+}
+
+.main-button-iteration3.active {
+  transform: scale(1.15) translateY(-6px);
+  box-shadow: 
+    0 16px 45px rgba(100, 116, 139, 0.25),
+    0 8px 20px rgba(100, 116, 139, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  animation: floatActivate 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.main-button-iteration3.active .center-dot {
+  transform: scale(2);
+  background: linear-gradient(145deg, 
+    rgba(59, 130, 246, 1) 0%,
+    rgba(37, 99, 235, 1) 100%
+  );
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+@keyframes floatActivate {
+  0% {
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    transform: scale(1.25) translateY(-8px);
+  }
+  100% {
+    transform: scale(1.15) translateY(-6px);
+  }
+}
+
+/* Nav buttons with refined floating aesthetic */
+.nav-button-iteration3 {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, 
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(248, 250, 252, 0.9) 100%
+  );
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: rgba(71, 85, 105, 0.9);
+  opacity: 0;
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  box-shadow: 
+    0 6px 20px rgba(100, 116, 139, 0.12),
+    0 2px 8px rgba(100, 116, 139, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  -webkit-user-select: none;
+  user-select: none;
+  transform: translate(-50%, -50%) scale(0.85) translateY(15px);
+  overflow: hidden;
+}
+
+.floating-shadow {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  width: 80%;
+  height: 8px;
+  background: radial-gradient(ellipse, 
+    rgba(100, 116, 139, 0.2) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  transform: translateX(-50%);
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.nav-button-iteration3.active {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1) translateY(0);
+  animation: floatSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.nav-button-iteration3.active .floating-shadow {
+  opacity: 1;
+}
+
+.nav-button-iteration3.hovered {
+  transform: translate(-50%, -50%) scale(1.1) translateY(-8px) !important;
+  box-shadow: 
+    0 12px 30px rgba(100, 116, 139, 0.18),
+    0 6px 15px rgba(100, 116, 139, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 0 20px rgba(59, 130, 246, 0.1);
+  background: linear-gradient(145deg, 
+    rgba(255, 255, 255, 1) 0%,
+    rgba(248, 250, 252, 0.95) 100%
+  );
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.nav-button-iteration3.hovered .floating-shadow {
+  transform: translateX(-50%) scale(1.2);
+  opacity: 0.8;
+}
+
+.nav-icon-minimal {
+  font-size: 18px;
+  color: rgba(100, 116, 139, 0.8);
+  transition: all 0.3s ease;
+  font-weight: 300;
+}
+
+.nav-label-minimal {
+  color: rgba(71, 85, 105, 0.8);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  transition: all 0.3s ease;
+}
+
+.nav-button-iteration3.hovered .nav-icon-minimal {
+  color: rgba(59, 130, 246, 0.9);
+  transform: scale(1.1);
+}
+
+.nav-button-iteration3.hovered .nav-label-minimal {
+  color: rgba(59, 130, 246, 0.8);
+  font-weight: 600;
+}
+
+@keyframes floatSlideIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.7) translateY(25px) rotateX(30deg);
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(1.05) translateY(-3px) rotateX(-5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) translateY(0) rotateX(0deg);
+  }
+}
+
+/* Mobile refinements */
+@media (max-width: 768px) {
+  .menu-container-iteration3 {
+    bottom: 40px;
+    width: 170px;
+    height: 170px;
+  }
+  
+  .main-button-iteration3 {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .center-dot {
+    width: 5px;
+    height: 5px;
+  }
+  
+  .nav-button-iteration3 {
+    width: 56px;
+    height: 56px;
+    font-size: 0.65rem;
+    border-radius: 16px;
+  }
+  
+  .nav-icon-minimal {
+    font-size: 16px;
+  }
+  
+  .menu-backdrop-iteration3 {
+    backdrop-filter: blur(30px) brightness(1.05);
+    -webkit-backdrop-filter: blur(30px) brightness(1.05);
+  }
+}
