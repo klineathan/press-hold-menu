@@ -14,10 +14,10 @@ function MenuIteration2() {
   
   // Navigation menu items with gaming-themed icons
   const navItems = [
-    { id: 1, label: "Home", path: "/", icon: "⚡", color: "#00ff88" },
-    { id: 2, label: "About", path: "/about", icon: "🎯", color: "#ff0080" },
-    { id: 3, label: "Contact", path: "/contact", icon: "💬", color: "#00d4ff" },
-    { id: 4, label: "Playground", path: "/playground", icon: "🚀", color: "#ff6600" }
+    { id: 1, label: "", path: "/", icon: "🏠", color: "#00ff88" },
+    { id: 2, label: "", path: "/about", icon: "ℹ️", color: "#ff0080" },
+    { id: 3, label: "", path: "/contact", icon: "💬", color: "#00d4ff" },
+    { id: 4, label: "", path: "/playground", icon: "🎮", color: "#ff6600" }
   ];
   
   // Use state for points to ensure they update properly after navigation
@@ -278,7 +278,6 @@ function MenuIteration2() {
             <div className="button-glow"></div>
             <div className="button-content">
               <span className="nav-icon-neon">{item.icon}</span>
-              <span className="nav-label-neon">{item.label}</span>
             </div>
             <div className="energy-particles">
               <div className="particle"></div>

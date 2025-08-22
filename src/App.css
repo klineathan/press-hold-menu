@@ -78,7 +78,7 @@
   justify-content: center;
   z-index: 100; /* Ensure it stays above content */
   /* Center the menu at the bottom of the screen */
-  bottom: 10px;
+  bottom: 5px;
   left: 50%;
   transform: translateX(-50%);
   width: 180px;
@@ -361,7 +361,7 @@
   /* Safari-specific positioning fix */
   .menu-container {
     position: fixed !important;
-    bottom: 10px !important;
+    bottom: 5px !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     z-index: 1000 !important;
@@ -376,7 +376,7 @@
 /* Better mobile handling */
 @media (max-width: 768px) {
   .menu-container {
-    bottom: 20px;
+    bottom: 5px;
     width: 150px;
     height: 150px;
   }

@@ -1,4 +1,4 @@
-import Menu from '../components/Menu';
+import DynamicMenu from '../components/DynamicMenu';
 
 function Home() {
   return (
@@ -29,7 +29,7 @@ function Home() {
         </div>
       </div>
       
-      <Menu />
+      <DynamicMenu />
     </div>
   );
 }

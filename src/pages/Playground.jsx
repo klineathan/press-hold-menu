@@ -1,10 +1,10 @@
-import Menu from '../components/Menu';
+import DynamicMenu from '../components/DynamicMenu';
 
 function Playground() {
   return (
     <div className='page-container'>
       <h1>Playground</h1>
-      <Menu />
+      <DynamicMenu />
     </div>
   )
 }

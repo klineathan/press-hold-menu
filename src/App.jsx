@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { MenuProvider } from './contexts/MenuContext';
 import './App.css'
 
 // Import pages
@@ -10,17 +11,19 @@ import MenuDemo from './pages/MenuDemo';
 
 function App() {
   return (
-    <Router>
-      <div className="app-container">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/playground" element={<Playground />} />
-          <Route path="/menu-demo" element={<MenuDemo />} />
-        </Routes>
-      </div>
-    </Router>
+    <MenuProvider>
+      <Router>
+        <div className="app-container">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/playground" element={<Playground />} />
+            <Route path="/menu-demo" element={<MenuDemo />} />
+          </Routes>
+        </div>
+      </Router>
+    </MenuProvider>
   );
 }
 
